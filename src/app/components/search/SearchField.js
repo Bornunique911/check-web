@@ -55,11 +55,12 @@ const SearchField = ({
   inputBaseProps,
   endAdornment,
   showExpand,
+  setParentSearchText,
+  searchText,
 }) => {
   const classes = useStyles();
   const [expand, setExpand] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [searchText, setSearchText] = React.useState(inputBaseProps.defaultValue);
   const [expandedText, setExpandedText] = React.useState(searchText);
 
   function handleExpand(event) {
@@ -88,7 +89,7 @@ const SearchField = ({
             id="search-input"
             {...inputBaseProps}
             onChange={(e) => {
-              setSearchText(e.target.value);
+              setParentSearchText(e.target.value);
               inputBaseProps.onChange(e);
             }}
             value={searchText}
@@ -187,7 +188,7 @@ const SearchField = ({
                   color="primary"
                   variant="contained"
                   onClick={(e) => {
-                    setSearchText(expandedText);
+                    setParentSearchText(expandedText);
                     handleClose();
                     inputBaseProps.onChange(e, expandedText);
                   }}
@@ -208,6 +209,7 @@ SearchField.defaultProps = {
   inputBaseProps: {},
   endAdornment: null,
   showExpand: false,
+  setParentSearchText: () => {},
 };
 
 SearchField.propTypes = {
@@ -215,6 +217,7 @@ SearchField.propTypes = {
   inputBaseProps: PropTypes.object,
   endAdornment: PropTypes.node,
   showExpand: PropTypes.bool,
+  setParentSearchText: PropTypes.func,
 };
 
 export default SearchField;

@@ -4,12 +4,20 @@ import { FormattedMessage, FormattedHTMLMessage } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
+import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import ClearIcon from '@material-ui/icons/Clear';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import {
+  Cancel as CancelIcon,
+  FiberManualRecord as MaskIcon,
+  VolumeUp as AudioIcon,
+  Clear as ClearIcon,
+} from '@material-ui/icons';
 import deepEqual from 'deep-equal';
 import styled from 'styled-components';
 import SearchKeywordMenu from './SearchKeywordConfig/SearchKeywordMenu';
@@ -65,6 +73,35 @@ const styles = theme => ({
     color: 'white',
     backgroundColor: brandHighlight,
   },
+  searchButton: {
+    margin: theme.spacing(1),
+  },
+  input: {
+    display: 'none',
+  },
+  image: {
+    marginLeft: theme.spacing(1),
+    position: 'relative',
+    overflowY: 'hidden',
+    height: '50px',
+    maxWidth: '50px',
+    '& img': {
+      maxWidth: '50px',
+    },
+    '& video': {
+      maxWidth: '50px',
+    },
+    '& #icon': {
+      position: 'relative',
+      marginTop: theme.spacing(1),
+      marginLeft: theme.spacing(1),
+    },
+    '& svg,button': {
+      position: 'absolute',
+      left: '1px',
+      top: '1px',
+    },
+  },
 });
 
 class SearchKeyword extends React.Component {
@@ -76,6 +113,10 @@ class SearchKeyword extends React.Component {
     this.state = {
       query: props.query, // CODE SMELL! Caller must use `key=` to reset state on prop change
       isPopperClosed: false, // user sets this once per page load
+      imgData: {
+        data: '',
+        name: '',
+      },
     };
   }
 
@@ -85,6 +126,14 @@ class SearchKeyword extends React.Component {
 
   componentWillUnmount() {
     this.unsubscribe();
+  }
+
+  setSearchText = (text) => {
+    const cleanQuery = this.cleanup(this.state.query);
+    cleanQuery.keyword = text;
+    this.setState({ query: cleanQuery });
+    // eslint-disable-next-line
+    console.log('~~~setting to', cleanQuery);
   }
 
   cleanup = (query) => {
@@ -248,6 +297,24 @@ class SearchKeyword extends React.Component {
     pusher.unsubscribe(team.pusher_channel, 'project_updated', 'SearchKeyword');
   }
 
+  handleUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      this.setState({
+        imgData: {
+          data: reader.result,
+          name: file.name,
+          file,
+          type: file.type,
+        },
+      });
+      this.setSearchText('');
+    };
+  }
+
   render() {
     const { team, classes } = this.props;
     const { statuses } = team.verification_statuses;
@@ -261,6 +328,39 @@ class SearchKeyword extends React.Component {
       ? this.title(statuses, projects)
       : (this.props.title || (this.props.project ? this.props.project.title : null));
 
+    const handleImageDismiss = () => {
+      this.setState({
+        imgData: {
+          data: '',
+          name: '',
+        },
+      });
+    };
+
+    /* eslint-disable jsx-a11y/media-has-caption */
+    const Thumbnail = () => {
+      let output;
+      if (this.state.imgData.type.match(/^video\//)) {
+        output = <video src={this.state.imgData.data} alt={this.state.imgData.name} />;
+      } else if (this.state.imgData.type.match(/^image\//)) {
+        output = <img src={this.state.imgData.data} alt={this.state.imgData.name} />;
+      } else if (this.state.imgData.type.match(/^audio\//)) {
+        output = <AudioIcon id="icon" fontSize="large" htmlColor="black" />;
+      }
+      return output;
+    };
+    /* eslint-enable jsx-a11y/media-has-caption */
+
+    const ImagePreview = () => (
+      <Box className={classes.image}>
+        <Thumbnail />
+        <MaskIcon fontSize="small" htmlColor="white" />
+        <IconButton onClick={handleImageDismiss}>
+          <CancelIcon fontSize="small" htmlColor="black" />
+        </IconButton>
+      </Box>
+    );
+
     return (
       <div>
         <PageTitle prefix={title} team={this.props.team} />
@@ -271,71 +371,135 @@ class SearchKeyword extends React.Component {
             onSubmit={this.handleSubmit}
             autoComplete="off"
           >
-            <Box width="450px">
-              <SearchField
-                isActive={this.keywordIsActive() || this.keywordConfigIsActive()}
-                showExpand={this.props.showExpand}
-                inputBaseProps={{
-                  defaultValue: this.state.query.keyword || '',
-                  onChange: this.handleInputChange,
-                  ref: this.searchInput,
-                }}
-                endAdornment={
-                  <InputAdornment
-                    classes={{
-                      root: classes.endAdornmentRoot,
-                      filled: (
-                        this.keywordConfigIsActive() ?
-                          classes.endAdornmentActive :
-                          classes.endAdornmentInactive
-                      ),
-                    }}
-                    variant="filled"
-                  >
-                    <SearchKeywordMenu
-                      teamSlug={this.props.team.slug}
-                      onChange={this.handleKeywordConfigChange}
-                      query={this.state.query}
-                      anchorParent={() => this.searchInput.current}
-                    />
-                  </InputAdornment>
-                }
-              />
-            </Box>
-            <StyledPopper
-              id="search-help"
-              open={
-                // Open the search help when
-                // - user has typed something
-                // - user has not explicitly closed the help
-                this.state.query.keyword !== this.props.query.keyword &&
-                !this.state.isPopperClosed
-              }
-              anchorEl={() => this.searchInput.current}
+            <Grid
+              container
+              direction="row"
+              justify="flex-end"
+              alignItems="center"
+              className={classes.endAdornmentContainer}
             >
-              <Paper>
-                <IconButton onClick={this.handlePopperClick}>
-                  <ClearIcon />
-                </IconButton>
-                <FormattedHTMLMessage
-                  id="search.help"
-                  defaultMessage='
-                    <table>
-                      <tbody>
-                        <tr><td>+</td><td>Tree + Leaf</td><td>Items with both Tree AND Leaf</td></tr>
-                        <tr><td>|</td><td>Tree | Leaf</td><td>Items with either Tree OR Leaf</td></tr>
-                        <tr><td>()</td><td>Tree + (Leaf | Branch)</td><td>Items with Tree AND Leaf OR items with Tree AND Branch</td></tr>
-                      </tbody>
-                    </table>
-                    <div>
-                      <a href="https://medium.com/meedan-user-guides/search-on-check-25c752bd8cc1" target="_blank" >
-                        Learn more about search techniques
-                      </a>
-                    </div>'
-                  description="Instructions for usage of logical operators on search input"
-                />
-              </Paper>
-            </StyledPopper>
+              <Grid item>
+                <Box width="450px">
+                  <SearchField
+                    isActive={this.keywordIsActive() || this.keywordConfigIsActive()}
+                    showExpand={this.props.showExpand}
+                    setParentSearchText={this.setSearchText}
+                    searchText={this.state.query.keyword || ''}
+                    inputBaseProps={{
+                      defaultValue: this.state.query.keyword || '',
+                      onChange: this.handleInputChange,
+                      ref: this.searchInput,
+                      disabled: this.state.imgData.data.length > 0,
+                    }}
+                    endAdornment={
+                      <InputAdornment
+                        classes={{
+                          root: classes.endAdornmentRoot,
+                          filled: (
+                            this.keywordConfigIsActive() ?
+                              classes.endAdornmentActive :
+                              classes.endAdornmentInactive
+                          ),
+                        }}
+                        variant="filled"
+                      >
+                        <SearchKeywordMenu
+                          teamSlug={this.props.team.slug}
+                          onChange={this.handleKeywordConfigChange}
+                          query={this.state.query}
+                          anchorParent={() => this.searchInput.current}
+                        />
+                      </InputAdornment>
+                    }
+                  />
+                </Box>
+                <StyledPopper
+                  id="search-help"
+                  open={
+                    // Open the search help when
+                    // - user has typed something
+                    // - user has not explicitly closed the help
+                    this.state.query.keyword !== this.props.query.keyword &&
+                    !this.state.isPopperClosed
+                  }
+                  anchorEl={() => this.searchInput.current}
+                >
+                  <Paper>
+                    <IconButton onClick={this.handlePopperClick}>
+                      <ClearIcon />
+                    </IconButton>
+                    <FormattedHTMLMessage
+                      id="search.help"
+                      defaultMessage='
+                        <table>
+                          <tbody>
+                            <tr><td>+</td><td>Tree + Leaf</td><td>Items with both Tree AND Leaf</td></tr>
+                            <tr><td>|</td><td>Tree | Leaf</td><td>Items with either Tree OR Leaf</td></tr>
+                            <tr><td>()</td><td>Tree + (Leaf | Branch)</td><td>Items with Tree AND Leaf OR items with Tree AND Branch</td></tr>
+                          </tbody>
+                        </table>
+                        <div>
+                          <a href="https://medium.com/meedan-user-guides/search-on-check-25c752bd8cc1" target="_blank" >
+                            Learn more about search techniques
+                          </a>
+                        </div>'
+                      description="Instructions for usage of logical operators on search input"
+                    />
+                  </Paper>
+                </StyledPopper>
+              </Grid>
+              { this.props.showExpand ? (
+                <Grid item>
+                  <Typography>
+                    &nbsp;
+                    <FormattedMessage
+                      id="search.or"
+                      defaultMessage="OR"
+                      description="This is a label that appears between two mutually exclusive search options, indicating that you may select one option 'OR' the other."
+                    />
+                  </Typography>
+                </Grid>) : null
+              }
+              { this.props.showExpand ? (
+                <Grid item>
+                  {this.state.imgData.data.length > 0 ? <ImagePreview /> : null}
+                </Grid>) : null
+              }
+              { this.props.showExpand ? (
+                <Grid item>
+                  <label htmlFor="media-upload">
+                    <input
+                      className={classes.input}
+                      id="media-upload"
+                      type="file"
+                      accept="image/*,video/*,audio/*"
+                      onChange={this.handleUpload}
+                    />
+                    <Button
+                      variant="outlined"
+                      className={classes.searchButton}
+                      component="span"
+                    >
+                      <FormattedMessage
+                        id="search.file"
+                        defaultMessage="Search with file"
+                        description="This is a label on a button that the user presses in order to choose a video, image, or audio file that will be searched for. The file itself is not uploaded, so 'upload' would be the wrong verb to use here. This action opens a file picker prompt."
+                      />
+                    </Button>
+                  </label>
+                </Grid>) : null
+              }
+              { this.props.showExpand ? (
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                  >
+                    Search
+                  </Button>
+                </Grid>) : null
+              }
+            </Grid>
           </form>
 
           { this.keywordIsActive() ? (
