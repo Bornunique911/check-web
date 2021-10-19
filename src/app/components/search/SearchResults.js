@@ -425,6 +425,7 @@ class SearchResultsComponent extends React.PureComponent {
               hideFields={this.props.hideFields}
               title={this.props.title}
               team={team}
+              showExpand={this.props.showExpand}
             />
           </Row>
           <Row className="project__description">
@@ -555,6 +556,7 @@ class SearchResultsComponent extends React.PureComponent {
 SearchResultsComponent.defaultProps = {
   project: null,
   projectGroup: null,
+  showExpand: false,
 };
 
 SearchResultsComponent.propTypes = {
@@ -577,6 +579,7 @@ SearchResultsComponent.propTypes = {
   }), // may be null
   searchUrlPrefix: PropTypes.string.isRequired,
   mediaUrlPrefix: PropTypes.string.isRequired,
+  showExpand: PropTypes.bool,
 };
 
 const SearchResultsContainer = Relay.createContainer(withStyles(Styles)(withPusher(SearchResultsComponent)), {

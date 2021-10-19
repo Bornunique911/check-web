@@ -30,6 +30,9 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(6),
     height: theme.spacing(6),
   },
+  endAdornmentContainer: {
+    width: theme.spacing(18),
+  },
   endAdornmentRoot: {
     cursor: 'pointer',
     display: 'flex',
@@ -51,12 +54,13 @@ const SearchField = ({
   isActive,
   inputBaseProps,
   endAdornment,
-  onSubmit,
   showExpand,
 }) => {
   const classes = useStyles();
   const [expand, setExpand] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [searchText, setSearchText] = React.useState(inputBaseProps.defaultValue);
+  const [expandedText, setExpandedText] = React.useState(searchText);
 
   function handleExpand(event) {
     setExpand(true);
@@ -83,6 +87,11 @@ const SearchField = ({
             name="search-input"
             id="search-input"
             {...inputBaseProps}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              inputBaseProps.onChange(e);
+            }}
+            value={searchText}
             InputProps={{
               disableUnderline: true,
               startAdornment: (
@@ -100,6 +109,7 @@ const SearchField = ({
                   direction="row"
                   justify="flex-end"
                   alignItems="center"
+                  className={classes.endAdornmentContainer}
                 >
                   { showExpand ? (
                     <Grid item>
@@ -154,7 +164,10 @@ const SearchField = ({
               rows={20}
               variant="outlined"
               fullWidth
-              onChange={inputBaseProps.onChange}
+              onChange={(e) => {
+                setExpandedText(e.target.value);
+              }}
+              value={expandedText}
             />
             <Grid
               container
@@ -173,9 +186,13 @@ const SearchField = ({
                 <Button
                   color="primary"
                   variant="contained"
-                  onClick={onSubmit}
+                  onClick={(e) => {
+                    setSearchText(expandedText);
+                    handleClose();
+                    inputBaseProps.onChange(e, expandedText);
+                  }}
                 >
-                  {placeholder}
+                  <FormattedMessage id="search.setText" defaultMessage="Set text" description="A label on a button that lets a user set the text on an associated popup to the original input field." />
                 </Button>
               </Grid>
             </Grid>
@@ -191,7 +208,6 @@ SearchField.defaultProps = {
   inputBaseProps: {},
   endAdornment: null,
   showExpand: false,
-  onSubmit: () => {},
 };
 
 SearchField.propTypes = {
@@ -199,7 +215,6 @@ SearchField.propTypes = {
   inputBaseProps: PropTypes.object,
   endAdornment: PropTypes.node,
   showExpand: PropTypes.bool,
-  onSubmit: PropTypes.func,
 };
 
 export default SearchField;

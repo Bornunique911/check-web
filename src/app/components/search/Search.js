@@ -79,10 +79,21 @@ export default function Search({
   searchUrlPrefix,
   title,
   icon,
+  showExpand,
 }) {
   let timestampedQuery = query;
   if (!noFilters(query, project, projectGroup)) {
     timestampedQuery = { ...query, timestamp: new Date().getTime() };
+  }
+
+  // hide the country menu option if you are not in the trends feature
+  let newHideFields = hideFields;
+  if (!window.location.pathname.match(/[\w-]+\/trends(\/|$)/)) {
+    if (!newHideFields.includes('country')) {
+      newHideFields.push('country');
+    }
+  } else {
+    newHideFields = newHideFields.filter(field => field !== 'country');
   }
 
   return (
@@ -96,10 +107,11 @@ export default function Search({
       listActions={listActions}
       listDescription={listDescription}
       page={page}
-      hideFields={hideFields}
+      hideFields={newHideFields}
       title={title}
       icon={icon}
       query={timestampedQuery}
+      showExpand={showExpand}
     />
   );
 }
@@ -108,9 +120,10 @@ Search.defaultProps = {
   projectGroup: null,
   savedSearch: null,
   page: undefined, // FIXME find a cleaner way to render Trash differently
-  hideFields: undefined,
+  hideFields: [],
   listDescription: undefined,
   listActions: undefined,
+  showExpand: false,
 };
 Search.propTypes = {
   searchUrlPrefix: PropTypes.string.isRequired,
@@ -125,4 +138,5 @@ Search.propTypes = {
   hideFields: PropTypes.arrayOf(PropTypes.string.isRequired), // or undefined
   page: PropTypes.oneOf(['trash', 'collection', 'list', 'folder', 'unconfirmed']), // FIXME find a cleaner way to render Trash differently
   query: PropTypes.object.isRequired, // may be empty
+  showExpand: PropTypes.bool,
 };

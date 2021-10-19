@@ -186,9 +186,9 @@ class SearchKeyword extends React.Component {
     );
   }
 
-  handleInputChange = (ev) => {
+  handleInputChange = (ev, textOverride) => {
     const { keyword, ...newQuery } = this.state.query;
-    const newKeyword = ev.target.value;
+    const newKeyword = ev.target.value || textOverride;
     if (newKeyword) { // empty string => remove property from query
       newQuery.keyword = newKeyword;
     }
@@ -274,6 +274,7 @@ class SearchKeyword extends React.Component {
             <Box width="450px">
               <SearchField
                 isActive={this.keywordIsActive() || this.keywordConfigIsActive()}
+                showExpand={this.props.showExpand}
                 inputBaseProps={{
                   defaultValue: this.state.query.keyword || '',
                   onChange: this.handleInputChange,
@@ -350,6 +351,9 @@ class SearchKeyword extends React.Component {
   }
 }
 
+SearchKeyword.defaultProps = {
+  showExpand: false,
+};
 SearchKeyword.propTypes = {
   classes: PropTypes.object.isRequired,
   pusher: pusherShape.isRequired,
@@ -373,6 +377,7 @@ SearchKeyword.propTypes = {
       })),
     }),
   }).isRequired,
+  showExpand: PropTypes.bool,
 };
 
 export default createFragmentContainer(withStyles(styles)(withPusher(SearchKeyword)), graphql`
