@@ -74,16 +74,18 @@ const styles = theme => ({
     backgroundColor: brandHighlight,
   },
   searchButton: {
-    margin: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
   input: {
     display: 'none',
   },
   image: {
     marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     position: 'relative',
     overflowY: 'hidden',
-    height: '50px',
+    height: '30px',
     maxWidth: '50px',
     '& img': {
       maxWidth: '50px',
@@ -132,8 +134,6 @@ class SearchKeyword extends React.Component {
     const cleanQuery = this.cleanup(this.state.query);
     cleanQuery.keyword = text;
     this.setState({ query: cleanQuery });
-    // eslint-disable-next-line
-    console.log('~~~setting to', cleanQuery);
   }
 
   cleanup = (query) => {
@@ -345,7 +345,7 @@ class SearchKeyword extends React.Component {
       } else if (this.state.imgData.type.match(/^image\//)) {
         output = <img src={this.state.imgData.data} alt={this.state.imgData.name} />;
       } else if (this.state.imgData.type.match(/^audio\//)) {
-        output = <AudioIcon id="icon" fontSize="large" htmlColor="black" />;
+        output = <AudioIcon id="icon" fontSize="medium" htmlColor="black" />;
       }
       return output;
     };
@@ -465,7 +465,7 @@ class SearchKeyword extends React.Component {
                   {this.state.imgData.data.length > 0 ? <ImagePreview /> : null}
                 </Grid>) : null
               }
-              { this.props.showExpand ? (
+              { this.props.showExpand && this.state.imgData.data.length === 0 ? (
                 <Grid item>
                   <label htmlFor="media-upload">
                     <input
@@ -494,6 +494,7 @@ class SearchKeyword extends React.Component {
                   <Button
                     variant="contained"
                     color="primary"
+                    colo
                   >
                     Search
                   </Button>
