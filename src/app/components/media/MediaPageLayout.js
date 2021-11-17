@@ -23,6 +23,7 @@ const StyledTopBar = styled.div`
 export default function MediaPageLayout({
   listUrl, buildSiblingUrl, listQuery, listIndex, projectId, projectMediaId, view,
 }) {
+  const [isEditing, setIsEditing] = React.useState(false);
   return (
     <div>
       {buildSiblingUrl ? (
@@ -30,6 +31,7 @@ export default function MediaPageLayout({
           buildSiblingUrl={buildSiblingUrl}
           listQuery={listQuery}
           listIndex={listIndex}
+          isEditing={isEditing}
         />
       ) : null}
       <StyledTopBar className="media-search__actions-bar">
@@ -42,7 +44,7 @@ export default function MediaPageLayout({
           projectMediaId={projectMediaId}
         />
       </StyledTopBar>
-      <Media projectId={projectId} projectMediaId={projectMediaId} view={view} />
+      <Media projectId={projectId} projectMediaId={projectMediaId} view={view} setIsEditing={setIsEditing} isEditing={isEditing} />
     </div>
   );
 }

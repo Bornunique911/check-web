@@ -407,7 +407,7 @@ class MediaComponent extends Component {
                 { /* Set maxHeight to screen height - (media bar + tabs) */ }
                 <Box maxHeight="calc(100vh - 112px)" style={{ overflowY: 'auto' }}>
                   { this.state.showTab === 'requests' ? <MediaRequests media={media} all={!media.is_confirmed_similar_to_another_item} /> : null }
-                  { this.state.showTab === 'metadata' ? <MediaTasks media={media} fieldset="metadata" /> : null }
+                  { this.state.showTab === 'metadata' ? <MediaTasks media={media} fieldset="metadata" setIsEditing={this.props.setIsEditing} isEditing={this.props.isEditing} /> : null }
                   { this.state.showTab === 'source' ? <MediaSource projectMedia={media} /> : null }
                   { this.state.showTab === 'tasks' ? <MediaTasks media={media} fieldset="tasks" /> : null }
                   { this.state.showTab === 'notes' ? <MediaComments media={media} onTimelineCommentOpen={this.onTimelineCommentOpen} /> : null }

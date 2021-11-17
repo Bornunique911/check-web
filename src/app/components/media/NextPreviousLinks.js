@@ -37,14 +37,14 @@ const StyledPager = styled.div`
 `;
 
 function NextPreviousLinksComponent({
-  buildSiblingUrl, listQuery, listIndex, nTotal,
+  buildSiblingUrl, listQuery, listIndex, nTotal, isEditing,
 }) {
   return (
     <StyledPager>
       <NextOrPreviousButton
         className="media-search__previous-item"
         key={`${JSON.stringify(listQuery)}-${listIndex - 1}`}
-        disabled={listIndex < 1}
+        disabled={listIndex < 1 || isEditing}
         tooltipTitle={
           <FormattedMessage id="mediaSearch.previousItem" defaultMessage="Previous item" />
         }
@@ -64,7 +64,7 @@ function NextPreviousLinksComponent({
       <NextOrPreviousButton
         className="media-search__next-item"
         key={`${JSON.stringify(listQuery)}-${listIndex + 1}`}
-        disabled={listIndex + 1 >= nTotal}
+        disabled={listIndex + 1 >= nTotal || isEditing}
         tooltipTitle={
           <FormattedMessage id="mediaSearch.nextItem" defaultMessage="Next item" />
         }
@@ -77,14 +77,23 @@ function NextPreviousLinksComponent({
     </StyledPager>
   );
 }
+NextPreviousLinksComponent.defaultProps = {
+  isEditing: false,
+};
 NextPreviousLinksComponent.propTypes = {
   buildSiblingUrl: PropTypes.func.isRequired, // func(dbid, listIndex) => location
   listQuery: PropTypes.object.isRequired,
   listIndex: PropTypes.number.isRequired,
   nTotal: PropTypes.number.isRequired,
+  isEditing: PropTypes.bool,
 };
 
-export default function NextPreviousLinks({ buildSiblingUrl, listQuery, listIndex }) {
+export default function NextPreviousLinks({
+  buildSiblingUrl,
+  listQuery,
+  listIndex,
+  isEditing,
+}) {
   return (
     <QueryRenderer
       environment={Relay.Store}
@@ -111,14 +120,19 @@ export default function NextPreviousLinks({ buildSiblingUrl, listQuery, listInde
             listQuery={listQuery}
             listIndex={listIndex}
             nTotal={props.search.number_of_results}
+            isEditing={isEditing}
           />
         );
       }}
     />
   );
 }
+NextPreviousLinks.defaultProps = {
+  isEditing: false,
+};
 NextPreviousLinks.propTypes = {
   buildSiblingUrl: PropTypes.func.isRequired, // func(dbid, listIndex) => location
   listQuery: PropTypes.object.isRequired,
   listIndex: PropTypes.number.isRequired,
+  isEditing: PropTypes.bool,
 };

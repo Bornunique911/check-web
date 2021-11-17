@@ -19,7 +19,7 @@ export default function NextOrPreviousButton({
 
   return (
     <Button disabled={disabled || loading} className={className} onClick={handleClick}>
-      {loading ? (
+      {loading && !disabled ? (
         <MediaSearchRedirect
           buildSiblingUrl={buildSiblingUrl}
           listQuery={listQuery}

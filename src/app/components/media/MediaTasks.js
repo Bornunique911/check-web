@@ -146,7 +146,12 @@ class MediaTasksComponent extends Component {
   }
 
   render() {
-    const { fieldset, about } = this.props;
+    const {
+      fieldset,
+      about,
+      setIsEditing,
+      isEditing,
+    } = this.props;
     const media = Object.assign(this.props.cachedMedia, this.props.media);
     const currentUserRole = UserUtil.myRole(
       this.getContext().currentUser,
@@ -180,7 +185,7 @@ class MediaTasksComponent extends Component {
               </FlexRow> : null }
             <CreateTask style={{ marginLeft: 'auto' }} media={media} />
           </div> : null }
-        <Tasks tasks={itemTasks.edges} media={media} about={about} fieldset={fieldset} />
+        <Tasks tasks={itemTasks.edges} media={media} about={about} fieldset={fieldset} setIsEditing={setIsEditing} isEditing={isEditing} />
       </StyledAnnotationRow>
     );
   }
@@ -313,7 +318,7 @@ const MediaMetadataContainer = Relay.createContainer(withPusher(MediaTasksCompon
 
 const MediaTasks = (props) => {
   let { media } = props;
-  const { params } = props;
+  const { params, setIsEditing, isEditing } = props;
 
   if (!media && params) {
     media = {
@@ -343,7 +348,7 @@ const MediaTasks = (props) => {
     return (
       <Relay.RootContainer
         Component={MediaMetadataContainer}
-        renderFetched={data => <MediaMetadataContainer cachedMedia={media} {...data} onTimelineCommentOpen={props.onTimelineCommentOpen} fieldset="metadata" />}
+        renderFetched={data => <MediaMetadataContainer cachedMedia={media} {...data} onTimelineCommentOpen={props.onTimelineCommentOpen} fieldset="metadata" setIsEditing={setIsEditing} isEditing={isEditing} />}
         route={route}
         renderLoading={() => <MediasLoading count={1} />}
       />
