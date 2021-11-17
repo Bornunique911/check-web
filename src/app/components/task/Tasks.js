@@ -80,7 +80,7 @@ const Tasks = ({
         router.routes[1],
         () => intl.formatMessage({
           id: 'tasks.confirmLeave',
-          defaultMessage: 'You are currently editing annotations. Do you wish to continue to a new page? Your work will not be saved.',
+          defaultMessage: 'You have unsaved annotations. Your changes will be lost if you continue.',
           description: 'This is a prompt that appears when a user tries to exit a page before saving their work. It appears in web browsers with a confirm/deny prompt that will be localized by the web browser.',
         }),
       );
