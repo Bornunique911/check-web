@@ -26,6 +26,7 @@ class UpdateStatusMutation extends Relay.Mutation {
           id,
           last_status,
           last_status_obj,
+          list_columns_values,
           log_count,
           dynamic_annotation_report_design,
         }
