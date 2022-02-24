@@ -19,6 +19,7 @@ class CreateProjectMedia extends React.Component {
 
     this.state = {
       dialogOpen: false,
+      waiting: false,
     };
   }
 
@@ -40,7 +41,8 @@ class CreateProjectMedia extends React.Component {
     this.props.setFlashMessage(message, 'error');
   };
 
-  submitMedia(value, status) {
+  submitMedia(value, status, resetForm) {
+    this.setState({ waiting: true });
     let prefix = null;
     if (this.props.project) {
       prefix = `/${this.props.team.slug}/project/${this.props.project.dbid}/media/`;
@@ -66,6 +68,8 @@ class CreateProjectMedia extends React.Component {
         },
       };
       const statusSuccess = () => {
+        this.setState({ dialogOpen: false, waiting: false });
+        resetForm();
         if (getFilters() !== '{}') {
           const rid = response.createProjectMedia.project_media.dbid;
           browserHistory.push(prefix + rid);
@@ -79,8 +83,6 @@ class CreateProjectMedia extends React.Component {
         Relay.Store.commitUpdate(new CreateStatusMutation(status_attr), { onSuccess: statusSuccess, onFailure: this.fail });
       }
     };
-
-    this.setState({ dialogOpen: false });
 
     Relay.Store.commitUpdate(
       new CreateProjectMediaMutation({
@@ -101,8 +103,8 @@ class CreateProjectMedia extends React.Component {
     this.setState({ dialogOpen: false });
   };
 
-  handleSubmit = (value, status) => {
-    this.submitMedia(value, status);
+  handleSubmit = (value, status, resetForm) => {
+    this.submitMedia(value, status, resetForm);
   };
 
   render() {
@@ -117,6 +119,7 @@ class CreateProjectMedia extends React.Component {
           onDismiss={this.handleCloseDialog}
           onSubmit={this.handleSubmit}
           team={this.props.team}
+          waiting={this.state.waiting}
         />
       </React.Fragment>
     );

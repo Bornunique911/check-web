@@ -147,10 +147,8 @@ class CreateMediaInput extends React.Component {
       return;
     }
 
-    this.resetForm();
-
     if (this.props.onSubmit) {
-      this.props.onSubmit(value, this.state.status);
+      this.props.onSubmit(value, this.state.status, this.resetForm);
     }
   }
 
