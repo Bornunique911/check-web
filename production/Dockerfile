@@ -1,6 +1,6 @@
 # meedan/check-web
 
-FROM node:erbium-buster AS base
+FROM node:12.16.1-buster AS base
 MAINTAINER sysops@meedan.com
 
 #
