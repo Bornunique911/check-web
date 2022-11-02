@@ -1,4 +1,4 @@
-FROM node:erbium-buster AS base
+FROM node:14.20-buster AS base
 MAINTAINER Meedan <sysops@meedan.com>
 
 # Set a UTF-8 capabable locale
