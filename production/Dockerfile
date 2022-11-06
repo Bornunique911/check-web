@@ -1,6 +1,6 @@
 # meedan/check-web
 
-FROM node:12.16.1-buster AS base
+FROM node:19.0-buster-slim AS base
 MAINTAINER sysops@meedan.com
 
 #
