@@ -125,7 +125,7 @@
     "intl": "^1.2.5",
     "intl-locales-supported": "^1.0.0",
     "json-loader": "^0.5.4",
-    "jss": "^10.2.0",
+    "jss": "^10.9.2",
     "jss-rtl": "^0.3.0",
     "leaflet": "^1.6.0",
     "lodash.isempty": "^4.4.0",
