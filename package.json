@@ -97,7 +97,7 @@
     "babel-plugin-import": "^1.13.5",
     "babel-plugin-react-intl": "^3.5.1",
     "babel-plugin-relay": "^1.7.0",
-    "babel-plugin-styled-components": "^1.10.7",
+    "babel-plugin-styled-components": "^1.13.3",
     "compression-webpack-plugin": "^0.3.2",
     "coordinate-parser": "^1.0.3",
     "core-js": "^3.25.5",
