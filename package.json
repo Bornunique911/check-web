@@ -168,7 +168,7 @@
     "redux": "^3.0.0",
     "redux-notify": "^0.2.0",
     "redux-thunk": "^2.1.0",
-    "relay-compiler": "^1.7.0",
+    "relay-compiler": "^13.0.0",
     "rtl-detect": "^1.0.0",
     "serve-static": "^1.10.2",
     "stacktrace-js": "^2.0.2",
