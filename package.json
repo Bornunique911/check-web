@@ -151,7 +151,7 @@
     "react-dom": "^17.0.2",
     "react-dropzone": "^4.3.0",
     "react-emoji-render": "^0.4.5",
-    "react-favicon": "0.0.8",
+    "react-favicon": "0.0.26",
     "react-ga": "^2.1.2",
     "react-helmet": "^6.0.0",
     "react-image-lightbox": "^5.0.0",
