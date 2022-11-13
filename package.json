@@ -138,7 +138,7 @@
     "moment": "^2.29.4",
     "node-fetch": "^2.6.7",
     "notistack": "^1.0.3",
-    "polished": "^1.2.1",
+    "polished": "^3.7.2",
     "prop-types": "^15.6.2",
     "qrcode.react": "^3.0.0",
     "raw-loader": "^0.5.1",
