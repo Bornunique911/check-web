@@ -107,6 +107,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+  cardText: {
+    fontSize: '14px',
+    lineHeight: '143%',
+    fontWeight: 400,
+  },
 }));
 
 const MediaSuggestionsComponent = ({
@@ -120,15 +125,6 @@ const MediaSuggestionsComponent = ({
   const classes = useStyles();
   // sort suggestions by the larger (more recent) of `last_seen` vs `created_at`, descending
   const sortedRelationships = relationships.sort((a, b) => Math.max(+b.target?.created_at, +b.target?.last_seen) - Math.max(+a.target?.created_at, +a.target?.last_seen));
-
-  if (relationships.length === 0) {
-    return (
-      <Box className={classes.card}>
-        <Typography variant="h2">0 suggested media</Typography>
-        <Typography variant="body1">Future suggestions will be listed here.</Typography>
-      </Box>
-    );
-  }
 
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [openEl, setOpenEl] = React.useState(null);
@@ -214,6 +210,7 @@ const MediaSuggestionsComponent = ({
           hasMain: is_confirmed_similar_to_another_item
           suggestionsCount: suggested_similar_items_count
           confirmedSimilarCount: confirmed_similar_items_count
+          is_suggested
           suggested_similar_relationships(first: 10000) {
             edges {
               node {
@@ -404,6 +401,14 @@ const MediaSuggestionsComponent = ({
   };
 
   const disableAcceptRejectButtons = total === 0 || !can(team.permissions, 'update Relationship') || isMutationPending;
+
+  if (relationships.length === 0) {
+    return (
+      <Box className={classes.card}>
+        <Typography variant="h2">0 suggested media</Typography>
+      </Box>
+    );
+  }
 
   return (
     <React.Fragment>

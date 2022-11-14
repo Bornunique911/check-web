@@ -103,6 +103,7 @@ const MediaSuggestionReview = ({ projectMedia, setFlashMessage }) => {
           hasMain: is_confirmed_similar_to_another_item
           suggestionsCount: suggested_similar_items_count
           confirmedSimilarCount: confirmed_similar_items_count
+          is_suggested
           suggested_similar_relationships(first: 10000) {
             edges {
               node {
@@ -252,7 +253,11 @@ const MediaSuggestionReview = ({ projectMedia, setFlashMessage }) => {
             <FormattedMessage id="mediaSuggestionReview.matchTitle" defaultMessage="Matched claim" description="Title of a box that lets the user open a claim that this has been matched with." />
           </Typography>
           <Typography className={classes.prompt} variant="body" component="p">
-            <FormattedMessage id="mediaSuggestionReview.matchDescription" defaultMessage="This media has been associated with the claim and fact-check below." description="Hint text to tell the user what the 'Open claim' button does." />
+            <FormattedMessage
+              id="mediaSuggestionReview.matchDescription"
+              defaultMessage="This media has been matched to the claim and fact-check below."
+              description="Hint text to tell the user what the 'Open claim' button does."
+            />
           </Typography>
           <Grid container direction="row" justifyContent="center" alignItems="flex-end">
             <Grid item xs={6}>
