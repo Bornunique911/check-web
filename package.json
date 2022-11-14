@@ -92,7 +92,7 @@
     "@material-ui/pickers": "^3.2.10",
     "@meedan/check-ui": "^0.1.56",
     "@react-google-maps/api": "1.8.7",
-    "@vvo/tzdb": "^6.39.0",
+    "@vvo/tzdb": "^6.71.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-import": "^1.13.5",
     "babel-plugin-react-intl": "^3.5.1",
